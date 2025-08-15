@@ -14,7 +14,7 @@ This project provides a robust, production-ready solution for detecting anomalie
 
 ## Prerequisites
 
-Before you begin, ensure you have Python 3.8 or higher installed. The required libraries are listed in the requirements.txt file.
+Before you begin, ensure you have Python 3.12 installed. The required libraries are listed in the requirements.txt file.
 
 ## Installation
 

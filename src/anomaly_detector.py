@@ -105,7 +105,6 @@ class AnomalyDetector:
             logging.info("Start training")
             self.model.fit(X, y)
             y_pred = self.model.predict(X)
-            logging.info("Training metrics")
             evaluate(y, y_pred)
         else:
             logging.info("Using pre-trained model.")
@@ -132,10 +131,11 @@ class AnomalyDetector:
         quantile_upper = [stats.norm.ppf(q=1-alpha/2, **dist.params) for dist in y_dist]
         anomaly = np.where((y_test >= quantile_lower) & (y_test <= quantile_upper), False, True)
         metrics = (
-            f"Anomalies: {np.sum(anomaly):.4f}\n"
-            f"Percentage: {(np.sum(anomaly) / len(anomaly)) * 100:.4f}"
+            f"Anomaly detection metrics.\n"
+            f"Anomalies: {np.sum(anomaly):.2f}\n"
+            f"Percentage: {(np.sum(anomaly) / len(anomaly)) * 100:.2f}"
         )
-        print(metrics)
+        logging.info(metrics)
         df_test["anomaly"] = anomaly
         self._save_dataset(df_test, self.pred_file)
 
