@@ -27,32 +27,26 @@ cd your-repo-name
 
 Create and activate a virtual environment (recommended):
 
-```
-python -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-```
+    python -m venv .venv
+    source .venv/bin/activate  # On Windows, use `.venv\Scripts\activate`
 
 Install the dependencies:
 
-```
     pip install -r requirements.txt
-```
 
 Project Structure
 
-```
-├── data/
-│   ├── train.csv
-│   └── test.csv
-├── models/
-│   └── ngboost_model.joblib
-├── src/
-│   ├── anomaly_detector.py
-│   └── utils.py
-├── config.json
-├── main.py
-└── README.md
-```
+    ├── data/
+    │   ├── train.csv
+    │   └── test.csv
+    ├── models/
+    │   └── ngboost_model.joblib
+    ├── src/
+    │   ├── anomaly_detector.py
+    │   └── utils.py
+    ├── config.json
+    ├── main.py
+    └── README.md
 
 ## Usage
 
