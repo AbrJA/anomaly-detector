@@ -19,28 +19,22 @@ Before you begin, ensure you have Python 3.8 or higher installed. The required l
 ## Installation
 
 Clone the repository:
-
-```
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
-```
+    git clone https://github.com/AbrJA/anomaly-detector.git
+    cd your-repo-name
 
 Create and activate a virtual environment (recommended):
-
     python -m venv .venv
     source .venv/bin/activate  # On Windows, use `.venv\Scripts\activate`
 
 Install the dependencies:
-
     pip install -r requirements.txt
 
 Project Structure
-
     ├── data/
-    │   ├── train.csv
-    │   └── test.csv
+    │   ├── sensor_data_train.csv
+    │   └── sensor_data_test.csv
     ├── models/
-    │   └── ngboost_model.joblib
+    │   └── model.pickle
     ├── src/
     │   ├── anomaly_detector.py
     │   └── utils.py
@@ -50,16 +44,17 @@ Project Structure
 
 ## Usage
 
-Prepare your data: Place your training data (train.csv) and test data (test.csv) inside the data/ folder. Ensure both files have timestamp and value columns.
+Prepare your data: Place your training data and test data in some place, for instance, inside the datasets/ folder. Ensure both files have timestamp and value columns.
 
 Configure the config.json file: Update the file paths and model parameters in config.json to match your needs.
 
     file_train: Path to the training data.
     file_test: Path to the test data.
     file_output: Path where the output CSV with anomalies will be saved.
-    model_path: Path to save or load the trained model.
+    load_model_path: Path to load the trained model.
+    save_model_path: Path to save the trained model.
     alpha: Significance level (e.g., 0.05 for a 95% confidence interval).
-    distribution: The statistical distribution for the NGBoost model (e.g., "normal", "lognormal").
+    distribution: The statistical distribution for the NGBoost model (e.g., "normal").
 
 Run the application: Execute the main script with the --config argument pointing to your configuration file.
 
@@ -79,7 +74,7 @@ The script will generate two main outputs:
 
 The application is designed to be efficient for production use.
 
-- Training and Saving: If the model_path specified in config.json does not exist, a new model will be trained on the data from file_train and saved to model_path.
+- Training and Saving: If the load_model_path specified in config.json does not exist, a new model will be trained on the data from file_train and saved to save_model_path if it's specified.
 
 - Loading and Predicting: If a model already exists at model_path, the script will automatically load it and skip the training phase, proceeding directly to anomaly detection on the test data.
 
