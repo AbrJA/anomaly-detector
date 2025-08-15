@@ -18,27 +18,27 @@ Before you begin, ensure you have Python 3.8 or higher installed. The required l
 
 ## Installation
 
-1 Clone the repository:
+Clone the repository:
 
 ```
 git clone https://github.com/your-username/your-repo-name.git
 cd your-repo-name
 ```
 
-2 Create and activate a virtual environment (recommended):
+Create and activate a virtual environment (recommended):
 
 ```
 python -m venv venv
 source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
 ```
 
-3 Install the dependencies:
+Install the dependencies:
 
 ```
     pip install -r requirements.txt
 ```
 
-4 Project Structure
+Project Structure
 
 ```
 ├── data/
@@ -61,15 +61,10 @@ Prepare your data: Place your training data (train.csv) and test data (test.csv)
 Configure the config.json file: Update the file paths and model parameters in config.json to match your needs.
 
     file_train: Path to the training data.
-
     file_test: Path to the test data.
-
     file_output: Path where the output CSV with anomalies will be saved.
-
     model_path: Path to save or load the trained model.
-
     alpha: Significance level (e.g., 0.05 for a 95% confidence interval).
-
     distribution: The statistical distribution for the NGBoost model (e.g., "normal", "lognormal").
 
 Run the application: Execute the main script with the --config argument pointing to your configuration file.
