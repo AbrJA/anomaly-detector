@@ -14,14 +14,14 @@ class AnomalyDetector:
     Anomalies in time-series data using a probabilistic regression model.
     """
 
-    def __init__(self, train_file: str, test_file: str, output_file: str):
+    def __init__(self, train_file: str, test_file: str, pred_file: str):
         """
         Initializes the AnomalyDetector with file paths.
 
         Args:
             train_file: Path to the CSV file containing training data.
             test_file: Path to the CSV file containing test data.
-            output_file: Path to save the anomaly report as a CSV.
+            pred_file: Path to save the anomaly report as a CSV.
         """
         if not os.path.exists(train_file):
             raise FileNotFoundError(f"Training file not found: {train_file}")
@@ -30,7 +30,7 @@ class AnomalyDetector:
 
         self.train_file = train_file
         self.test_file = test_file
-        self.output_file = output_file
+        self.pred_file = pred_file
         self.model = None
         logging.info("AnomalyDetector class initialized successfully.")
 
@@ -137,7 +137,7 @@ class AnomalyDetector:
         )
         print(metrics)
         df_test["anomaly"] = anomaly
-        self._save_dataset(df_test, self.output_file)
+        self._save_dataset(df_test, self.pred_file)
 
     def save(self, save_model_path: str = None):
         """
@@ -153,13 +153,13 @@ class AnomalyDetector:
         else:
             logging.warning("No save path specified. Model not saved.")
 
-    def _save_dataset(self, df: pd.DataFrame, output_file: str):
+    def _save_dataset(self, df: pd.DataFrame, pred_file: str):
         """
         Saves a file to CSV format.
 
         Args:
             df: DataFrame to save.
-            output_file: The file path to save the DataFrame.
+            pred_file: The file path to save the DataFrame.
         """
-        df.to_csv(output_file, index=False)
-        logging.info(f"Data saved to '{output_file}'")
+        df.to_csv(pred_file, index=False)
+        logging.info(f"Data saved to '{pred_file}'")

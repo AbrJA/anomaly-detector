@@ -1,6 +1,6 @@
-file_train: "datasets/sensor_data_train.csv"
-file_test: "datasets/sensor_data_test.csv"
-file_output: "datasets/sensor_anomalies.csv"
+train_file: "datasets/sensor_data_train.csv"
+test_file: "datasets/sensor_data_test.csv"
+pred_file: "datasets/sensor_data_pred.csv"
 alpha: 0.01
 dist: "normal"
 n_estimators: 500

@@ -11,7 +11,7 @@ def main():
         formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument(
-        "--config_file",
+        "--config",
         type=str,
         required=True,
         help="Path to the configuration YAML file."
@@ -19,16 +19,16 @@ def main():
     args = parser.parse_args()
 
     try:
-        if not os.path.exists(args.config_file):
-            raise FileNotFoundError(f"Configuration file not found: {args.config_file}")
-        with open(args.config_file, "r") as f:
+        if not os.path.exists(args.config):
+            raise FileNotFoundError(f"Configuration file not found: {args.config}")
+        with open(args.config, "r") as f:
             config = yaml.safe_load(f)
-        file_train = config.get("file_train")
-        file_test = config.get("file_test")
-        file_output = config.get("file_output")
-        if not file_train or not file_test or not file_output:
-            raise ValueError("Configuration file must specify 'file_train', 'file_test', and 'file_output'.")
-        detector = AnomalyDetector(file_train, file_test, file_output)
+        train_file = config.get("train_file")
+        test_file = config.get("test_file")
+        pred_file = config.get("pred_file")
+        if not train_file or not test_file or not pred_file:
+            raise ValueError("Configuration file must specify 'train_file', 'test_file', and 'pred_file'.")
+        detector = AnomalyDetector(train_file, test_file, pred_file)
         detector.load(load_model_path=config.get("load_model_path", None))
         detector.train(dist = config.get("distribution", "normal"),
                        n_estimators=config.get("n_estimators", 500),

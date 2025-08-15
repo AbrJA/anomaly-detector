@@ -53,9 +53,9 @@ Project Structure
 - **Configure the `config.json` file**: Update the file paths and model parameters in config.json to match your needs.
 
 ```
-file_train: Path to the training data.
-file_test: Path to the test data.
-file_output: Path where the output CSV with anomalies will be saved.
+train_file: Path to the training data.
+test_file: Path to the test data.
+pred_file: Path where the output CSV with anomalies will be saved.
 load_model_path: Path to load the trained model.
 save_model_path: Path to save the trained model.
 alpha: Significance level (e.g., 0.05 for a 95% confidence interval).
@@ -84,9 +84,9 @@ The script will generate two main outputs:
 
 The application is designed to be efficient for production use.
 
-- Training and Saving: If the load_model_path specified in config.json does not exist, a new model will be trained on the data from file_train and saved to save_model_path if it's specified.
+- **Training and Saving**: If the `load_model_path` specified in `config.json` does not exist, a new model will be trained on the data from file_train and saved to save_model_path if it's specified.
 
-- Loading and Predicting: If a model already exists at model_path, the script will automatically load it and skip the training phase, proceeding directly to anomaly detection on the test data.
+- **Loading and Predicting**: If a model already exists at `load_model_path`, the script will automatically load it and skip the training phase, proceeding directly to anomaly detection on the test data.
 
 ## Contributing
 
