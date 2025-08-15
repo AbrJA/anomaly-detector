@@ -82,17 +82,17 @@ python main.py --config config.json
 
 The script will generate two main outputs:
 
-    Console Logs: Detailed logs will be printed to the console, showing the training process, model metrics, and the anomaly detection summary.
+- Console Logs: Detailed logs will be printed to the console, showing the training process, model metrics, and the anomaly detection summary.
 
-    Output File: A new CSV file (as specified in file_output in config.json) will be created, containing the test data with a new anomaly column (True for anomalies, False otherwise).
+- Output File: A new CSV file (as specified in file_output in config.json) will be created, containing the test data with a new anomaly column (True for anomalies, False otherwise).
 
 ## Model Management
 
 The application is designed to be efficient for production use.
 
-    Training and Saving: If the model_path specified in config.json does not exist, a new model will be trained on the data from file_train and saved to model_path.
+- Training and Saving: If the model_path specified in config.json does not exist, a new model will be trained on the data from file_train and saved to model_path.
 
-    Loading and Predicting: If a model already exists at model_path, the script will automatically load it and skip the training phase, proceeding directly to anomaly detection on the test data.
+- Loading and Predicting: If a model already exists at model_path, the script will automatically load it and skip the training phase, proceeding directly to anomaly detection on the test data.
 
 ## Contributing
 
