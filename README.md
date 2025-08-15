@@ -52,13 +52,15 @@ Project Structure
 
 - **Configure the `config.json` file**: Update the file paths and model parameters in config.json to match your needs.
 
-    file_train: Path to the training data.
-    file_test: Path to the test data.
-    file_output: Path where the output CSV with anomalies will be saved.
-    load_model_path: Path to load the trained model.
-    save_model_path: Path to save the trained model.
-    alpha: Significance level (e.g., 0.05 for a 95% confidence interval).
-    distribution: The statistical distribution for the NGBoost model (e.g., "normal").
+```
+file_train: Path to the training data.
+file_test: Path to the test data.
+file_output: Path where the output CSV with anomalies will be saved.
+load_model_path: Path to load the trained model.
+save_model_path: Path to save the trained model.
+alpha: Significance level (e.g., 0.05 for a 95% confidence interval).
+distribution: The statistical distribution for the NGBoost model (e.g., "normal").
+```
 
 - **Run the application**: Execute the main script with the --config argument pointing to your configuration file.
 
