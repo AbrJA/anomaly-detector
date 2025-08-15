@@ -10,16 +10,17 @@ from src.utils import evaluate
 
 class AnomalyDetector:
     """
-    This class encapsulates the logic for training a model on univariate
-    time serie data and test it in a new dataset.
+    Anomalies in time-series data using a probabilistic regression model.
     """
 
     def __init__(self, file_train: str, file_test: str, file_output: str):
         """
-        Initializes the AnomalyDetector with configuration parameters.
+        Initializes the AnomalyDetector with file paths.
 
         Args:
-
+            file_train: Path to the CSV file containing training data.
+            file_test: Path to the CSV file containing test data.
+            file_output: Path to save the anomaly report as a CSV.
         """
         if not os.path.exists(file_train):
             raise FileNotFoundError(f"Training file not found: {file_train}")
@@ -33,7 +34,13 @@ class AnomalyDetector:
         logging.info("AnomalyDetector class initialized successfully.")
 
     def _load(self, file_path: str) -> pd.DataFrame:
-        """Loads and validates sensor data from a CSV file."""
+        """
+        Loads and validates data, the function expects the CSV to have 'timestamp'
+        and 'value' columns.
+
+        Args:
+            file_path: The path to the CSV data file.
+        """
         try:
             df = pd.read_csv(file_path)
             if "timestamp" not in df.columns or "value" not in df.columns:
@@ -50,10 +57,15 @@ class AnomalyDetector:
     def train(self, dist: str, n_estimators: int, learning_rate: float,
               minibatch_frac: float, col_sample: float):
         """
-        Trains the detector by establishing a baseline from training data.
+        Trains the NGBoost model using the data from the file_train.
 
         Args:
-            file_train_path: Path to the CSV file with training data.
+            dist: The distribution to use for NGBoost (e.g., "normal", "lognormal").
+            n_estimators: The number of boosting iterations.
+            learning_rate: The learning rate for the boosting algorithm.
+            minibatch_frac: The fraction of data to use for each minibatch.
+            col_sample: The fraction of columns to sample for each tree.
+            save_path: (Optional) The file path to save the trained model.
         """
         logging.info("Trainig phase...")
         distributions = {"normal": Normal, "lognormal": LogNormal, "exponential": Exponential}
@@ -78,13 +90,12 @@ class AnomalyDetector:
 
     def predict(self, alpha: float):
         """
-        Detects anomalies in the test data using the established baseline.
+        Detects anomalies in the test data using the trained model.
+        Anomalies are identified as data points that fall outside the
+        `1 - alpha` prediction interval of the model's distribution.
 
         Args:
-            test_data_path: Path to the CSV file with test data.
-
-        Returns:
-            A DataFrame containing the detected anomalies.
+            alpha: The significance level for the confidence interval.
         """
         logging.info("Predicting phase...")
         if self.model is None:
@@ -108,7 +119,11 @@ class AnomalyDetector:
 
     def _save(self, df: pd.DataFrame, file_output: str):
         """
-        Saves the detected anomalies to a CSV report.
+        Saves a file to CSV format.
+
+        Args:
+            df: DataFrame to save.
+            file_output: The file path to save the DataFrame.
         """
         df.to_csv(file_output, index=False)
         logging.info(f"Data saved to '{file_output}'")
