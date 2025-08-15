@@ -1,14 +1,20 @@
 FROM python:3.12
 
-RUN pip install -r requirements.txt
-
 WORKDIR /detector
 
-RUN mkdir /detector/models
+# RUN mkdir /detector/models
 
-ADD datasets /detector/datasets
-ADD src /detector/src
+# Add source code, configs, and data
+ADD datasets ./datasets
+ADD models ./models
+ADD src ./src
+ADD config.yaml ./config.yaml
+
+# Add root files
 ADD requirements.txt .
 ADD main.py .
 
-CMD ["python", "-i", "main.py"]
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+CMD ["python", "/detector/main.py", "--config_file", "/detector/config.yaml"]

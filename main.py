@@ -11,7 +11,7 @@ def main():
         formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument(
-        "--file_config",
+        "--config_file",
         type=str,
         required=True,
         help="Path to the configuration YAML file."
@@ -19,9 +19,9 @@ def main():
     args = parser.parse_args()
 
     try:
-        if not os.path.exists(args.file_config):
-            raise FileNotFoundError(f"Configuration file not found: {args.file_config}")
-        with open(args.file_config, "r") as f:
+        if not os.path.exists(args.config_file):
+            raise FileNotFoundError(f"Configuration file not found: {args.config_file}")
+        with open(args.config_file, "r") as f:
             config = yaml.safe_load(f)
         file_train = config.get("file_train")
         file_test = config.get("file_test")
