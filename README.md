@@ -60,6 +60,10 @@ load_model_path: Path to load the trained model.
 save_model_path: Path to save the trained model.
 alpha: Significance level (e.g., 0.05 for a 95% confidence interval).
 distribution: The statistical distribution for the NGBoost model (e.g., "normal").
+n_estimators: Number of boosting rounds (trees).
+learning_rate: Step size shrinkage used in update to prevent overfitting.
+minibatch_frac: Fraction of data to use for each boosting iteration.
+col_sample: Fraction of features to use for each boosting iteration.
 ```
 
 - **Run the application**: Execute the main script with the --config argument pointing to your configuration file.
