@@ -12,27 +12,7 @@ This project provides a robust, production-ready solution for detecting anomalie
 
 - **Structured Logging**: Uses Python's built-in logging module for clear, timestamped output and error handling.
 
-## Prerequisites
-
-Before you begin, ensure you have Python 3.12 installed. The required libraries are listed in the requirements.txt file.
-
-## Installation
-
-Clone the repository:
-
-    git clone https://github.com/AbrJA/anomaly-detector.git
-    cd your-repo-name
-
-Create and activate a virtual environment (recommended):
-
-    python -m venv .venv
-    source .venv/bin/activate  # On Windows, use `.venv\Scripts\activate`
-
-Install the dependencies:
-
-    pip install -r requirements.txt
-
-Project Structure
+### Project Structure
 
     ├── data/
     │   ├── sensor_data_train.csv
@@ -45,6 +25,46 @@ Project Structure
     ├── config.json
     ├── main.py
     └── README.md
+
+## Prerequisites
+
+**Clone the repository**:
+
+    git clone https://github.com/AbrJA/anomaly-detector.git
+    cd your-repo-name
+
+### Local
+
+Before you begin, ensure you have Python 3.12 installed. The required libraries are listed in the requirements.txt file.
+
+#### Installation
+
+**Create and activate a virtual environment (recommended)**:
+
+    python -m venv .venv
+    source .venv/bin/activate  # On Windows, use `.venv\Scripts\activate`
+
+- **Install the dependencies**:
+
+    pip install -r requirements.txt
+
+- **Run the application**:
+
+    python main.py --config config.json
+
+### Docker
+
+You can run the application in a containerized environment using Docker.
+
+Build the Docker image
+
+    docker build -t anomaly-detector .
+
+Run the container
+
+    sudo docker run --name anomaly-detector-cont anomaly-detector
+
+**Note:** Make sure to update your `Dockerfile` to copy your training and test data files into the image.
 
 ## Usage
 
@@ -64,12 +84,6 @@ n_estimators: Number of boosting rounds (trees).
 learning_rate: Step size shrinkage used in update to prevent overfitting.
 minibatch_frac: Fraction of data to use for each boosting iteration.
 col_sample: Fraction of features to use for each boosting iteration.
-```
-
-- **Run the application**: Execute the main script with the --config argument pointing to your configuration file.
-
-```
-python main.py --config config.json
 ```
 
 ## Output
