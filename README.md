@@ -44,11 +44,11 @@ Before you begin, ensure you have Python 3.12 installed. The required libraries 
     python -m venv .venv
     source .venv/bin/activate  # On Windows, use `.venv\Scripts\activate`
 
-- **Install the dependencies**:
+**Install the dependencies**:
 
     pip install -r requirements.txt
 
-- **Run the application**:
+**Run the application**:
 
     python main.py --config config.json
 
@@ -56,15 +56,15 @@ Before you begin, ensure you have Python 3.12 installed. The required libraries 
 
 You can run the application in a containerized environment using Docker.
 
-Build the Docker image
+**Build the Docker image:**
 
     docker build -t anomaly-detector .
 
-Run the container
+**Run the container:**
 
     sudo docker run --name anomaly-detector-cont anomaly-detector
 
-**Note:** Make sure to update your `Dockerfile` to copy your training and test data files into the image.
+*Note:* Make sure to update your `Dockerfile` to copy your training and test data files into the image.
 
 ## Usage
 
