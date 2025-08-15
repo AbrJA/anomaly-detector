@@ -33,11 +33,11 @@ This project provides a robust, production-ready solution for detecting anomalie
     git clone https://github.com/AbrJA/anomaly-detector.git
     cd your-repo-name
 
+## Installation
+
 ### Local
 
 Before you begin, ensure you have Python 3.12 installed. The required libraries are listed in the requirements.txt file.
-
-#### Installation
 
 **Create and activate a virtual environment (recommended)**:
 
