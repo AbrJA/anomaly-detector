@@ -4,13 +4,13 @@ This project provides a robust, production-ready solution for detecting anomalie
 
 ## Features
 
-- Configurable Parameters: All model and file path parameters are managed via a config.json file, eliminating the need for long command-line arguments.
+- **Configurable Parameters**: All model and file path parameters are managed via a config.json file, eliminating the need for long command-line arguments.
 
-- Modular Design: The project is split into logical modules (main.py, anomaly_detector.py, utils.py) for improved readability, reusability, and easier testing.
+- **Modular Design**: The project is split into logical modules (main.py, anomaly_detector.py, utils.py) for improved readability, reusability, and easier testing.
 
-- Model Persistence: The trained model can be saved and reloaded, allowing for efficient prediction on new data without re-training.
+- **Model Persistence**: The trained model can be saved and reloaded, allowing for efficient prediction on new data without re-training.
 
-- Structured Logging: Uses Python's built-in logging module for clear, timestamped output and error handling.
+- **Structured Logging**: Uses Python's built-in logging module for clear, timestamped output and error handling.
 
 ## Prerequisites
 
@@ -19,17 +19,21 @@ Before you begin, ensure you have Python 3.8 or higher installed. The required l
 ## Installation
 
 Clone the repository:
+
     git clone https://github.com/AbrJA/anomaly-detector.git
     cd your-repo-name
 
 Create and activate a virtual environment (recommended):
+
     python -m venv .venv
     source .venv/bin/activate  # On Windows, use `.venv\Scripts\activate`
 
 Install the dependencies:
+
     pip install -r requirements.txt
 
 Project Structure
+
     ├── data/
     │   ├── sensor_data_train.csv
     │   └── sensor_data_test.csv
@@ -44,9 +48,9 @@ Project Structure
 
 ## Usage
 
-Prepare your data: Place your training data and test data in some place, for instance, inside the datasets/ folder. Ensure both files have timestamp and value columns.
+- **Prepare your data**: Place your training data and test data in some place, for instance, inside the datasets/ folder. Ensure both files have timestamp and value columns.
 
-Configure the config.json file: Update the file paths and model parameters in config.json to match your needs.
+- **Configure the `config.json` file**: Update the file paths and model parameters in config.json to match your needs.
 
     file_train: Path to the training data.
     file_test: Path to the test data.
@@ -56,7 +60,7 @@ Configure the config.json file: Update the file paths and model parameters in co
     alpha: Significance level (e.g., 0.05 for a 95% confidence interval).
     distribution: The statistical distribution for the NGBoost model (e.g., "normal").
 
-Run the application: Execute the main script with the --config argument pointing to your configuration file.
+- **Run the application**: Execute the main script with the --config argument pointing to your configuration file.
 
 ```
 python main.py --config config.json
@@ -66,9 +70,9 @@ python main.py --config config.json
 
 The script will generate two main outputs:
 
-- Console Logs: Detailed logs will be printed to the console, showing the training process, model metrics, and the anomaly detection summary.
+- **Console Logs**: Detailed logs will be printed to the console, showing the training process, model metrics, and the anomaly detection summary.
 
-- Output File: A new CSV file (as specified in file_output in config.json) will be created, containing the test data with a new anomaly column (True for anomalies, False otherwise).
+- **Output File**: A new CSV file (as specified in file_output in config.json) will be created, containing the test data with a new anomaly column (True for anomalies, False otherwise).
 
 ## Model Management
 
