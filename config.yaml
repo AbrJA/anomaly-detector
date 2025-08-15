@@ -1,0 +1,13 @@
+file_train: "datasets/sensor_data_train.csv"
+file_test: "datasets/sensor_data_test.csv"
+file_output: "datasets/sensor_anomalies.csv"
+alpha: 0.05
+dist: "normal"
+n_estimators: 500
+learning_rate: 0.01
+minibatch_frac: 1.0
+col_sample: 1.0
+# save_path: "data/model.ngb"
+# save_model: true
+# load_model: false
+# model_path: "data/model.ngb"

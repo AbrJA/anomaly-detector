@@ -54,8 +54,11 @@ class AnomalyDetector:
         except (pd.errors.ParserError, ValueError) as e:
             raise ValueError(f"Error parsing data from '{file_path}': {e}")
 
-    def train(self, dist: str, n_estimators: int, learning_rate: float,
-              minibatch_frac: float, col_sample: float):
+    def train(self, dist: str = "normal",
+              n_estimators: int = 500,
+              learning_rate: float = 0.01,
+              minibatch_frac: float = 1.0,
+              col_sample: float = 1.0):
         """
         Trains the NGBoost model using the data from the file_train.
 
