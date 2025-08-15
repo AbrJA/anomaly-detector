@@ -46,7 +46,7 @@ class AnomalyDetector:
                 self.model = pickle.load(f)
             logging.info(f"Model loaded from '{load_model_path}'.")
         else:
-            logging.warning("No pre-trained model found or specified. Starting with a new model.")
+            logging.warning("No pre-trained model found or specified.")
 
     def _load_dataset(self, file_path: str) -> pd.DataFrame:
         """

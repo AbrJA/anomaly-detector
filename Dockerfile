@@ -17,4 +17,4 @@ ADD main.py .
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python", "/detector/main.py", "--config_file", "/detector/config.yaml"]
+CMD ["python", "/detector/main.py", "--config", "/detector/config.yaml"]
