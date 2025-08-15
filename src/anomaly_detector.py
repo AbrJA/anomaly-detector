@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import logging
+import pickle
 from sklearn.model_selection import train_test_split
 from ngboost import NGBRegressor
 from ngboost.distns import Normal, LogNormal, Exponential
@@ -13,27 +14,41 @@ class AnomalyDetector:
     Anomalies in time-series data using a probabilistic regression model.
     """
 
-    def __init__(self, file_train: str, file_test: str, file_output: str):
+    def __init__(self, train_file: str, test_file: str, output_file: str):
         """
         Initializes the AnomalyDetector with file paths.
 
         Args:
-            file_train: Path to the CSV file containing training data.
-            file_test: Path to the CSV file containing test data.
-            file_output: Path to save the anomaly report as a CSV.
+            train_file: Path to the CSV file containing training data.
+            test_file: Path to the CSV file containing test data.
+            output_file: Path to save the anomaly report as a CSV.
         """
-        if not os.path.exists(file_train):
-            raise FileNotFoundError(f"Training file not found: {file_train}")
-        if not os.path.exists(file_test):
-            raise FileNotFoundError(f"Test file not found: {file_test}")
+        if not os.path.exists(train_file):
+            raise FileNotFoundError(f"Training file not found: {train_file}")
+        if not os.path.exists(test_file):
+            raise FileNotFoundError(f"Test file not found: {test_file}")
 
-        self.file_train = file_train
-        self.file_test = file_test
-        self.file_output = file_output
+        self.train_file = train_file
+        self.test_file = test_file
+        self.output_file = output_file
         self.model = None
         logging.info("AnomalyDetector class initialized successfully.")
 
-    def _load(self, file_path: str) -> pd.DataFrame:
+    def load(self, load_model_path: str = None):
+        """
+        Loads a pre-trained model from the specified path.
+
+        Args:
+            load_model_path: The file path to load the pre-trained model.
+        """
+        if load_model_path and os.path.exists(load_model_path):
+            with open(load_model_path, "rb") as f:
+                self.model = pickle.load(f)
+            logging.info(f"Model loaded from '{load_model_path}'.")
+        else:
+            logging.warning("No pre-trained model found or specified. Starting with a new model.")
+
+    def _load_dataset(self, file_path: str) -> pd.DataFrame:
         """
         Loads and validates data, the function expects the CSV to have 'timestamp'
         and 'value' columns.
@@ -60,7 +75,7 @@ class AnomalyDetector:
               minibatch_frac: float = 1.0,
               col_sample: float = 1.0):
         """
-        Trains the NGBoost model using the data from the file_train.
+        Trains the NGBoost model using the data from the train_file.
 
         Args:
             dist: The distribution to use for NGBoost (e.g., "normal", "lognormal").
@@ -71,25 +86,29 @@ class AnomalyDetector:
             save_path: (Optional) The file path to save the trained model.
         """
         logging.info("Trainig phase...")
-        distributions = {"normal": Normal, "lognormal": LogNormal, "exponential": Exponential}
-        dist = distributions[dist]
-        df_train = self._load(self.file_train)
 
-        X = df_train.minute.to_numpy().reshape(-1, 1)
-        y = df_train.value.to_numpy()
+        if self.model is None:
+            distributions = {"normal": Normal, "lognormal": LogNormal, "exponential": Exponential}
+            dist = distributions[dist]
+            df_train = self._load_dataset(self.train_file)
 
-        self.model = NGBRegressor(
-            Dist=dist,
-            n_estimators=n_estimators,
-            learning_rate=learning_rate,
-            minibatch_frac=minibatch_frac,
-            col_sample=col_sample
-        )
-        logging.info("Start training")
-        self.model.fit(X, y)
-        y_pred = self.model.predict(X)
-        logging.info("Training metrics")
-        evaluate(y, y_pred)
+            X = df_train.minute.to_numpy().reshape(-1, 1)
+            y = df_train.value.to_numpy()
+
+            self.model = NGBRegressor(
+                Dist=dist,
+                n_estimators=n_estimators,
+                learning_rate=learning_rate,
+                minibatch_frac=minibatch_frac,
+                col_sample=col_sample
+            )
+            logging.info("Start training")
+            self.model.fit(X, y)
+            y_pred = self.model.predict(X)
+            logging.info("Training metrics")
+            evaluate(y, y_pred)
+        else:
+            logging.info("Using pre-trained model.")
 
     def predict(self, alpha: float):
         """
@@ -104,7 +123,7 @@ class AnomalyDetector:
         if self.model is None:
             raise RuntimeError("Model is not trained. Please call .train() first.")
 
-        df_test = self._load(self.file_test)
+        df_test = self._load_dataset(self.test_file)
         X_test = df_test.minute.to_numpy().reshape(-1, 1)
         y_test = df_test.value.to_numpy()
         logging.info("Start predicting")
@@ -118,15 +137,29 @@ class AnomalyDetector:
         )
         print(metrics)
         df_test["anomaly"] = anomaly
-        self._save(df_test, self.file_output)
+        self._save_dataset(df_test, self.output_file)
 
-    def _save(self, df: pd.DataFrame, file_output: str):
+    def save(self, save_model_path: str = None):
+        """
+        Saves the trained model to the specified path.
+
+        Args:
+            save_model_path: The file path to save the trained model.
+        """
+        if save_model_path is not None:
+            with open(save_model_path, "wb") as f:
+                pickle.dump(self.model, f)
+            logging.info(f"Model saved to '{save_model_path}'")
+        else:
+            logging.warning("No save path specified. Model not saved.")
+
+    def _save_dataset(self, df: pd.DataFrame, output_file: str):
         """
         Saves a file to CSV format.
 
         Args:
             df: DataFrame to save.
-            file_output: The file path to save the DataFrame.
+            output_file: The file path to save the DataFrame.
         """
-        df.to_csv(file_output, index=False)
-        logging.info(f"Data saved to '{file_output}'")
+        df.to_csv(output_file, index=False)
+        logging.info(f"Data saved to '{output_file}'")

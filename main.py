@@ -5,8 +5,6 @@ import sys
 import yaml
 from src.anomaly_detector import AnomalyDetector
 
-logger = logging.getLogger(__name__)
-
 def main():
     parser = argparse.ArgumentParser(
         description="Detect anomalies in factory sensor data.",
@@ -31,12 +29,14 @@ def main():
         if not file_train or not file_test or not file_output:
             raise ValueError("Configuration file must specify 'file_train', 'file_test', and 'file_output'.")
         detector = AnomalyDetector(file_train, file_test, file_output)
+        detector.load(load_model_path=config.get("load_model_path", None))
         detector.train(dist = config.get("distribution", "normal"),
                        n_estimators=config.get("n_estimators", 500),
                        learning_rate=config.get("learning_rate", 0.01),
                        minibatch_frac=config.get("minibatch_frac", 1.0),
                        col_sample=config.get("col_sample", 1.0))
         detector.predict(config.get("alpha", 0.01))
+        detector.save(save_model_path=config.get("save_model_path", None))
     except (FileNotFoundError, ValueError, RuntimeError) as e:
         logging.error(f"An error occurred: {e}")
         sys.exit(1)
