@@ -1,13 +1,17 @@
 import pandas as pd
 import numpy as np
 import argparse
+import os
 import sys
+import logging
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, median_absolute_error
 from ngboost import NGBRegressor
 from ngboost.distns import Normal, LogNormal, Exponential
 from scipy import stats
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 distributions = {
     "normal": Normal,
@@ -21,15 +25,23 @@ class AnomalyDetector:
     time serie data and test it in a new dataset.
     """
 
-    def __init__(self, train: str, test: str, output: str):
+    def __init__(self, file_train: str, file_test: str, file_output: str):
         """
         Initializes the AnomalyDetector with configuration parameters.
 
         Args:
 
         """
-        self.files = {"train": train, "test": test, "output": output}
+        if not os.path.exists(file_train):
+            raise FileNotFoundError(f"Training file not found: {file_train}")
+        if not os.path.exists(file_test):
+            raise FileNotFoundError(f"Test file not found: {file_test}")
+
+        self.file_train = file_train
+        self.file_test = file_test
+        self.file_output = file_output
         self.model = None
+        logger.info("AnomalyDetector class initialized successfully.")
 
     def _load(self, file_path: str) -> pd.DataFrame:
         """Loads and validates sensor data from a CSV file."""
@@ -38,8 +50,8 @@ class AnomalyDetector:
             if "timestamp" not in df.columns or "value" not in df.columns:
                 raise ValueError("Missing required 'timestamp' or 'value' columns.")
             df["timestamp"] = pd.to_datetime(df["timestamp"])
-            # df.set_index("timestamp", inplace=True)
             df["minute"] = df["timestamp"].dt.hour * 60 + df["timestamp"].dt.minute
+            logger.info(f"Data loaded from '{file_path}'. Shape: {df.shape}")
             return df
         except FileNotFoundError:
             raise FileNotFoundError(f"Error: Data file not found at '{file_path}'")
@@ -54,10 +66,9 @@ class AnomalyDetector:
         Args:
             file_train_path: Path to the CSV file with training data.
         """
-        file_train = self.files["train"]
+        logger.info("Trainig phase...")
         dist = distributions[dist]
-        print("\n--- Step 1: Training the model on '{file_train}' ---\n")
-        df_train = self._load(self.files["train"])
+        df_train = self._load(self.file_train)
 
         X = df_train.minute.to_numpy().reshape(-1, 1)
         y = df_train.value.to_numpy()
@@ -69,12 +80,17 @@ class AnomalyDetector:
             minibatch_frac=minibatch_frac,
             col_sample=col_sample
         )
+        logger.info("Start training")
         self.model.fit(X, y)
         y_pred = self.model.predict(X)
-        print("\nTrain MSE: ", mean_squared_error(y, y_pred))
-        print("Train MAE: ", mean_absolute_error(y, y_pred))
-        print("Train R2: ", r2_score(y, y_pred))
-        print("Train Median AE: ", median_absolute_error(y, y_pred))
+        logger.info("Training metrics")
+        metrics = (
+            f"MSE: {mean_squared_error(y, y_pred):.4f}\n"
+            f"MAE: {mean_absolute_error(y, y_pred):.4f}\n"
+            f"R2: {r2_score(y, y_pred):.4f}\n"
+            f"Median AE: {median_absolute_error(y, y_pred):.4f}"
+        )
+        print(metrics)
 
     def predict(self, alpha: float):
         """
@@ -86,29 +102,32 @@ class AnomalyDetector:
         Returns:
             A DataFrame containing the detected anomalies.
         """
+        logger.info("Predicting phase...")
         if self.model is None:
             raise RuntimeError("Model is not trained. Please call .train() first.")
-        print(f"\n--- Step 2: Scanning '{self.files["test"]}' for anomalies ---")
-        df_test = self._load(self.files["test"])
+
+        df_test = self._load(self.file_test)
         X_test = df_test.minute.to_numpy().reshape(-1, 1)
         y_test = df_test.value.to_numpy()
+        logger.info("Start predicting")
         y_dist = self.model.pred_dist(X_test)
         quantile_lower = [stats.norm.ppf(q=alpha/2, **dist.params) for dist in y_dist]
         quantile_upper = [stats.norm.ppf(q=1-alpha/2, **dist.params) for dist in y_dist]
         anomaly = np.where((y_test >= quantile_lower) & (y_test <= quantile_upper), False, True)
-        num_anomalies = np.sum(anomaly)
-        num_normal = len(anomaly) - num_anomalies
-        percent_anomalies = (num_anomalies / len(anomaly)) * 100
-        print(f"Anomalies: {num_anomalies}, Normal: {num_normal}, Percentage anomalies: {percent_anomalies:.2f}%")
+        metrics = (
+            f"Anomalies: {np.sum(anomaly):.4f}\n"
+            f"Percentage: {(np.sum(anomaly) / len(anomaly)) * 100:.4f}"
+        )
+        print(metrics)
         df_test["anomaly"] = anomaly
-        self._save(df_test, self.files["output"])
+        self._save(df_test, self.file_output)
 
     def _save(self, df: pd.DataFrame, file_output: str):
         """
         Saves the detected anomalies to a CSV report.
         """
         df.to_csv(file_output, index=False)
-        print(f"File successfully saved to '{file_output}'")
+        logger.info(f"Data saved to '{file_output}'")
 
 def main():
     parser = argparse.ArgumentParser(
@@ -182,7 +201,7 @@ def main():
                        col_sample=args.col_sample)
         detector.predict(args.alpha)
     except (FileNotFoundError, ValueError, RuntimeError) as e:
-        print(f"\n[ERROR] {e}", file=sys.stderr)
+        logging.error(f"An error occurred: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
