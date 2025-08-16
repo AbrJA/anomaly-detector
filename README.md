@@ -62,7 +62,7 @@ You can run the application in a containerized environment using Docker.
 
 **Run the container:**
 
-    [sudo] docker run --name anomaly-detector-cont anomaly-detector
+    [sudo] docker run  -v "$(pwd)/cache":/detector --name anomaly-detector-cont anomaly-detector
 
 *Note:* Make sure to update your `Dockerfile` to copy your training and test data files into the image.
 
