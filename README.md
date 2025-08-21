@@ -50,7 +50,7 @@ Before you begin, ensure you have Python 3.12 installed. The required libraries 
 
 **Run the application**:
 
-    python main.py --config config.json
+    python main.py --config config.yaml
 
 ### Docker
 
